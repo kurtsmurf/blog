@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <a class="home" href="/">&#9166; home</a>
+    {{ content }}
+</body>
+</html>
+<style>
+    html {
+        display: flex;
+        justify-content: center;
+        font-family: monospace;
+    }
+    body {
+        flex-grow: 1;
+        max-width: 60ch;
+        color: hsl(0deg 0% 10%);
+    }
+</style>
