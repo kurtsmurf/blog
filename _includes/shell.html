@@ -7,7 +7,11 @@
 </head>
 <body>
     <a class="home" href="/">&#9166; home</a>
-    {{ content }}
+    <main>{{ content }}</main>
+    <footer>
+        <hr>
+        <p>Written by Chris Smith</p>
+    </footer>
 </body>
 </html>
 <style>
@@ -15,10 +19,23 @@
         display: flex;
         justify-content: center;
         font-family: monospace;
+        height: 100%;
     }
     body {
         flex-grow: 1;
         max-width: 60ch;
         color: hsl(0deg 0% 10%);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        margin-block: 0;
+        padding-block: 1rem;
+        box-sizing: border-box;
+    }
+    footer hr {
+        border: 1px dashed currentColor;
+    }
+    footer {
+        margin-top: auto;
     }
 </style>
