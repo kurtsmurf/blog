@@ -11,10 +11,12 @@
     <footer>
       <small>Written by Chris Smith</small>
       <a href="https://github.com/kurtsmurf/">
-        <img src="/assets/img/github.svg" alt="Github logo" />
+        <!-- <img src="/assets/img/github.svg" alt="Github logo" /> -->
+        {% include "_github-logo.html" %}
       </a>
       <a href="https://www.linkedin.com/in/christopher-smith-81a7bb131/">
-        <img src="/assets/img/linkedin.svg" alt="LinkedIn logo" />
+        <!-- <img src="/assets/img/linkedin.svg" alt="LinkedIn logo" /> -->
+        {% include "_linkedin-logo.html" %}
       </a>
     </footer>
   </body>
@@ -35,6 +37,7 @@
     flex-direction: column;
     margin: 0;
     padding: 1rem;
+    padding-bottom: 0;
     box-sizing: border-box;
   }
   footer {
@@ -47,6 +50,7 @@
   }
   footer a {
     width: 24px;
+    color: inherit;
   }
   footer a:first-of-type {
     margin-left: auto;
