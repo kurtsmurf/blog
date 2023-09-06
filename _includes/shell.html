@@ -14,6 +14,7 @@
       content="white"
       media="(prefers-color-scheme: light)"
     />
+    <meta name="description" content="Blog of Chris Smith who is a web developer and a musician." />
     <title>{{ title }}</title>
   </head>
   <body>
@@ -24,11 +25,9 @@
     <footer>
       <small>Written by Chris Smith</small>
       <a href="https://github.com/kurtsmurf/">
-        <!-- <img src="/assets/img/github.svg" alt="Github logo" /> -->
         {% include "_github-logo.html" %}
       </a>
       <a href="https://www.linkedin.com/in/christopher-smith-81a7bb131/">
-        <!-- <img src="/assets/img/linkedin.svg" alt="LinkedIn logo" /> -->
         {% include "_linkedin-logo.html" %}
       </a>
     </footer>
@@ -55,8 +54,6 @@
     }
   }
   html {
-    display: flex;
-    justify-content: center;
     font-family: monospace;
     height: 100%;
     background: var(--background);
@@ -71,8 +68,8 @@
     margin: 0;
     padding: 1rem;
     padding-bottom: 0;
+    margin-inline: auto;
   }
-
   footer {
     background: var(--background);
     border-top: 2px dotted currentColor;
