@@ -2,7 +2,25 @@
 layout: shell.html
 ---
 
-<h1>{{ title }}</h1>
-<pre>{{date  | date: "%Y-%m-%d"}}</pre>
-<strong>{{ description }}</strong>
-{{ content }}
+<header>
+  <h1>{{ title }}</h1>
+  <p>{{date | date: "%Y-%m-%d"}}</p>
+  <strong id="description">{{ description }}</strong>
+</header>
+<main>{{ content }}</main>
+
+<style>
+  pre {
+    background: hsl(0deg 0% 93%);
+    padding: 1ch;
+    border-radius: 0.5ch;
+    width: min(60ch, calc(100vw - 2rem));
+    overflow: auto;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    pre {
+      background: hsl(0deg 0% 20%);
+    }
+  }
+</style>

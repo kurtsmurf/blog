@@ -18,9 +18,9 @@
   </head>
   <body>
     <nav>
-      <a class="home" href="/">&#9166; home</a>
+      <a class="home" href="/">&#8629; home</a>
     </nav>
-    <main>{{ content }}</main>
+    {{ content }}
     <footer>
       <small>Written by Chris Smith</small>
       <a href="https://github.com/kurtsmurf/">
@@ -36,6 +36,10 @@
 </html>
 
 <style>
+  * {
+    box-sizing: border-box;
+  }
+
   :root {
     --color: hsl(0deg 0% 10%);
     --background: white;
@@ -47,7 +51,7 @@
       --background: hsl(0deg 0% 10%);
     }
     a {
-      color: teal;
+      color: hsl(180deg 60% 40%);
     }
   }
   html {
@@ -67,8 +71,8 @@
     margin: 0;
     padding: 1rem;
     padding-bottom: 0;
-    box-sizing: border-box;
   }
+
   footer {
     background: var(--background);
     border-top: 2px dotted currentColor;
