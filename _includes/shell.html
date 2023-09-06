@@ -11,10 +11,13 @@
     />
     <meta
       name="theme-color"
-      content="white"
+      content="whitesmoke"
       media="(prefers-color-scheme: light)"
     />
-    <meta name="description" content="Blog of Chris Smith who is a web developer and a musician." />
+    <meta
+      name="description"
+      content="Blog of Chris Smith who is a web developer and a musician."
+    />
     <title>{{ title }}</title>
   </head>
   <body>
@@ -41,16 +44,25 @@
 
   :root {
     --color: hsl(0deg 0% 10%);
-    --background: white;
+    --background: whitesmoke;
+  }
+  a {
+    color: deeppink;
+  }
+  a:active {
+    color: hotpink;
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --color: white;
+      --color: whitesmoke;
       --background: hsl(0deg 0% 10%);
     }
     a {
       color: hsl(180deg 60% 40%);
+    }
+    a:active {
+      color: hsl(180deg 60% 60%);
     }
   }
   html {
