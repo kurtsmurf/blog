@@ -2,11 +2,15 @@
 layout: shell.html
 ---
 
+<nav>
+  <a class="home" href="/">&#8629; home</a>
+</nav>
 <header>
   <h1>{{ title }}</h1>
   <p>{{date | date: "%Y-%m-%d"}}</p>
   <strong id="description">{{ description }}</strong>
 </header>
+&hellip;
 <main>{{ content }}</main>
 
 <style>
