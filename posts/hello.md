@@ -1,6 +1,6 @@
 ---
 title: Hello World
-date: 2023-12-14 00:00:00 -5
+date: 2023-09-04 00:00:00 -5
 description: How and why I made this blog.
 ---
 
