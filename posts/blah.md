@@ -5,6 +5,16 @@ date: 2023-09-20 00:00:00 -5
 draft: true
 ---
 
+I'm making a web-based audio sampling utility.
+
+First you upload an audio file, then you chop it into pieces.
+
+<img style="display: block; width: 100%;" src="/assets/img/diagram-1.svg" />
+
+Once you have pieces that you like, you can download them.
+
+<img style="display: block; width: 100%;" src="/assets/img/diagram-2.svg" />
+
 Here's the download function:
 
 ```Typescript
@@ -45,7 +55,7 @@ In the first section of the function body we "render" our audio for download wit
 
 First we initialize the offline audio context.
 
-```
+```Typescript
 const offlineAudioContext =
   new OfflineAudioContext(
     buffer.numberOfChannels,
@@ -66,9 +76,10 @@ Next we queue up the playback events that we want to record.
 attackRelease(offlineAudioContext, buffer, region);
 ```
 
-the function attackRelease schedules playback of the specified region of the specified audio buffer with an amplitude envelope applied (0.001s ramp in and out)
+the function attackRelease schedules playback of the specified region of the specified audio buffer with an amplitude envelope applied (0.001s ramp in and out). We apply the amplitude envelope to prevent popping noises when region playback starts or ends.
 
-```
+
+```Typescript
 export function attackRelease(
   audioContext: AudioContext | OfflineAudioContext,
   buffer: AudioBuffer,
@@ -103,8 +114,6 @@ export function attackRelease(
 }
 ```
 
-We apply the amplitude envelope to prevent popping noises when region playback starts or ends.
-
 Finally, we set everything in motion by calling startRendering on the offline context.
 
 Even though we told the offline context to run for the length of our selection, which may be seconds or minutes long, it will finish the task in much faster than realtime because it doesn't need to throttle itself for human listeners.
@@ -112,5 +121,3 @@ Even though we told the offline context to run for the length of our selection, 
 When the audio context is finished rendering it returns the result as another AudioBuffer.
 
 We use a library function to convert the AudioBuffer into an bytes encoded in wav format.
-
-
