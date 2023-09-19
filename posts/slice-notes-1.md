@@ -80,3 +80,7 @@ URL.revokeObjectURL(link.href);
 [https://stackoverflow.com/questions/62172398/convert-audiobuffer-to-arraybuffer-blob-for-wav-download](https://stackoverflow.com/questions/62172398/convert-audiobuffer-to-arraybuffer-blob-for-wav-download)
 
 [https://github.com/Jam3/audiobuffer-to-wav/tree/master](https://github.com/Jam3/audiobuffer-to-wav/tree/master)
+
+<style>
+	a { word-break: break-word }
+</style>
