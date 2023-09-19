@@ -1,123 +1,82 @@
 ---
-title: slice notes
-description: Describing in detail some code for no particular reason other than I'm happy that it works. The joy of works is real.
-date: 2023-09-20 00:00:00 -5
+title: Slice Notes 1
+description: Feature - download Javascript AudioBuffers as wav files. 
+date: 2023-09-19 00:00:00 -5
 draft: true
 ---
 
-I'm making a web-based audio sampling utility.
+Working on a web-based sampler named [slice](https://github.com/kurtsmurf/slice).
 
-First you upload an audio file, then you chop it into pieces.
+So far slice can
+
+- load audio
+- slice audio
 
 <img style="display: block; width: 100%;" src="/assets/img/diagram-1.svg" />
 
-Once you have pieces that you like, you can download them.
+With [this commit](https://github.com/kurtsmurf/slice/commit/f47dcfb75fc1d80a5ef79e1275868d394d8c9a8b) it can also
+
+- selectively download audio
 
 <img style="display: block; width: 100%;" src="/assets/img/diagram-2.svg" />
 
-Here's the download function:
 
-```Typescript
-const download = async (
-  buffer: AudioBuffer,
-  region: { start: number; end: number },
-) => {
-  // render audiobuffer of region
-  const offlineAudioContext =
-    new OfflineAudioContext(
-      buffer.numberOfChannels,
-      buffer.duration * buffer.sampleRate *
-        (region.end - region.start),
-      buffer.sampleRate,
-    );
-  attackRelease(offlineAudioContext, buffer, region);
-  const offlineResult = await offlineAudioContext
-    .startRendering();
+## code
 
-  // convert audiobuffer to an arraybuffer
-  // of wav-encoded bytes
-  const wav = audiobufferToWav(offlineResult);
+Given a [buffer](https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer) and a region (defined as two numbers range 0-1 **start** and **end**)
 
-  // trigger download
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(
-    new Blob([wav], { type: "audio/wav" }),
-  );
-  link.setAttribute("download", "my-audio.wav");
-  link.click();
-  URL.revokeObjectURL(link.href);
+
+```Javascript
+const download = async (buffer, region) => {
+  // ...
 };
 ```
 
-The download function takes two parameters: an AudioBuffer named buffer and region which is an object indicating the start and endpoints for playback as numbers between 0 and 1 i.e. between 0% and 100% of buffer length.
+### 1. Write the region (with effects applied) to a new buffer
 
-In the first section of the function body we "render" our audio for download with an OfflineAudioContext.
+Use an [OfflineAudioContext](https://developer.mozilla.org/en-US/docs/Web/API/OfflineAudioContext) to render Web Audio output in faster than realtime.
 
-First we initialize the offline audio context.
-
-```Typescript
+```Javascript
 const offlineAudioContext =
   new OfflineAudioContext(
     buffer.numberOfChannels,
-    buffer.duration * buffer.sampleRate *
-      (region.end - region.start),
+    buffer.duration * buffer.sampleRate * (region.end - region.start),
     buffer.sampleRate,
   );
-
-```
-
-Unlike a regular audio context which tends to run for the lifetime of the application we say up front how long the offline context should run.
-
-In this case we tell it to live for the duration of the audio snippet we intend to export.
-
-Next we queue up the playback events that we want to record.
-
-```
 attackRelease(offlineAudioContext, buffer, region);
+const offlineResult = await offlineAudioContext.startRendering();
 ```
 
-the function attackRelease schedules playback of the specified region of the specified audio buffer with an amplitude envelope applied (0.001s ramp in and out). We apply the amplitude envelope to prevent popping noises when region playback starts or ends.
+The **attackRelease** function (defined [elsewhere](https://github.com/kurtsmurf/slice/blob/f47dcfb75fc1d80a5ef79e1275868d394d8c9a8b/src/player.ts#L53)) is responsible for scheduling playback of the region with a gain envelope of 0.001s attack 0.001s release. This is done to soften the edges of samples that may cross the source waveform at non-zero values, leading to undesirable pops and clicks.
 
+The plan is to use even more effects in the future - variable filter, speed and volume. With OfflineAudioContext the same effects we use for in-app playback will be applied to the files we download.
 
-```Typescript
-export function attackRelease(
-  audioContext: AudioContext | OfflineAudioContext,
-  buffer: AudioBuffer,
-  region: { start: number; end: number },
-  onended?: () => void,
-) {
-  const ramp = 0.001;
-  const gainNode = audioContext.createGain();
-  gainNode.connect(audioContext.destination);
-  gainNode.gain.setValueAtTime(
-    0, audioContext.currentTime
-  );
-  gainNode.gain.linearRampToValueAtTime(
-    1, audioContext.currentTime + ramp
-  );
+### 2. Convert the buffer to wav-encoded bytes 
 
-  const startSeconds = buffer.duration * region.start;
-  const endSeconds = buffer.duration * region.end;
-  const durationSeconds = endSeconds - startSeconds;
+Use package [audio-buffer-to-wav](https://www.npmjs.com/package/audiobuffer-to-wav)
 
-  const end =
-    audioContext.currentTime + durationSeconds;
-  gainNode.gain.setValueAtTime(1, end - ramp);
-  gainNode.gain.linearRampToValueAtTime(0, end);
-
-  const sourceNode =
-    audioContext.createBufferSource();
-  sourceNode.buffer = buffer;
-  sourceNode.connect(gainNode);
-  if (onended) sourceNode.onended = onended;
-  sourceNode.start(0, startSeconds, durationSeconds);
-}
+```Javascript
+const wav = audiobufferToWav(offlineResult);
 ```
 
-Finally, we set everything in motion by calling startRendering on the offline context.
+### 3. Create and trigger a download link 
 
-Even though we told the offline context to run for the length of our selection, which may be seconds or minutes long, it will finish the task in much faster than realtime because it doesn't need to throttle itself for human listeners.
+```Javascript
+const link = document.createElement("a");
+link.href = URL.createObjectURL(
+  new Blob([wav], { type: "audio/wav" }),
+);
+link.setAttribute("download", "untitled.wav");
+link.click();
+URL.revokeObjectURL(link.href);
+```
 
-When the audio context is finished rendering it returns the result as another AudioBuffer.
+[createObjectUrl](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL_static)
 
-We use a library function to convert the AudioBuffer into an bytes encoded in wav format.
+## references
+
+[http://joesul.li/van/tale-of-no-clocks/](http://joesul.li/van/tale-of-no-clocks/)
+
+[https://stackoverflow.com/questions/62172398/convert-audiobuffer-to-arraybuffer-blob-for-wav-download](https://stackoverflow.com/questions/62172398/convert-audiobuffer-to-arraybuffer-blob-for-wav-download)
+
+[https://github.com/Jam3/audiobuffer-to-wav/tree/master](https://github.com/Jam3/audiobuffer-to-wav/tree/master)
